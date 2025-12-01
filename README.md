@@ -1,16 +1,52 @@
-# React + Vite
+# TaskFlow – Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains the **frontend (React + Vite)** for our TaskFlow project.
 
-Currently, two official plugins are available:
+Repo URL:  
+https://github.com/varshithpulluri18/taskflow-frontend.git
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+1.Clone the project
+Open a terminal and run:
+git clone https://github.com/varshithpulluri18/taskflow-frontend.git
+cd taskflow-frontend 
+2. Install dependencies
+From inside the project folder (where package.json is):
+npm install
+3. Run the frontend
+Start the Vite dev server with:
+npm run dev
+4. What you can see on the frontend
+Once the app is running, you can navigate through:
+Login / Signup
+Dashboard – TaskFlow overview, My upcoming tasks, Recent activity
+My Tasks – add tasks, set due dates, mark complete
+Calendar – month/week/day views, tasks with due dates show up on their dates
+Teams / Team Board – simple Kanban-style columns
+Notifications – notifications page wired to axios
+Right now, some data may be mock/empty until the backend is fully connected, but the UI and routing are ready.
+5. Important note about login (dev fallback)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Right now, the backend is still being finished.
 
-## Expanding the ESLint configuration
+The frontend already uses **axios** to call these auth endpoints:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `POST /auth/login`
+- `POST /auth/signup`
+- `GET /auth/me`
+- `POST /auth/logout`
+
+However, to make sure everyone can still see all the pages (Dashboard, Tasks, Calendar, Teams, Notifications) even if the backend is not running, we added a small dev fallback in `AuthContext`.
+
+What this means for you:
+
+- When you try to Login or Sign up:
+  - If the backend is running and responds correctly → we use the real user from the backend.
+  - If the backend is not running or returns an error, the app will log you in as a demo user instead.
+- In both cases, you will be able to:
+  - Access dashboard, tasks, calendar, teams, notifications.
+  - Click around and see the full UI
+
+So even without the backend, you can still open the app, log in with any email/password, and explore all the screens.  
+Once the backend teammate finishes their APIs, the same login flow will automatically start using real data.
