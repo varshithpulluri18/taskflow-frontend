@@ -5,9 +5,9 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // while checking token on startup
+  const [loading, setLoading] = useState(true);
 
-  // Load current user on first load if token exists
+  // Try to load current user if token exists
   useEffect(() => {
     const token = localStorage.getItem("taskflow_token");
     if (!token) {
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
         const res = await axiosClient.get("/auth/me");
         setUser(res.data.user || res.data);
       } catch (err) {
-        console.error("Failed to load current user", err);
+        console.error("Failed to load current user, clearing token", err);
         localStorage.removeItem("taskflow_token");
       } finally {
         setLoading(false);
@@ -28,25 +28,49 @@ export const AuthProvider = ({ children }) => {
     })();
   }, []);
 
+  // 🔹 DEV FALLBACK: if backend fails, still log in with a fake user
+  const devFallbackLogin = (overrides = {}) => {
+    const fakeUser = {
+      id: "dev-user",
+      name: overrides.name || "Demo User",
+      email: overrides.email || "demo@example.com",
+    };
+    console.warn("Using DEV fallback auth user:", fakeUser);
+    setUser(fakeUser);
+    localStorage.setItem("taskflow_token", "dev-token");
+  };
+
   const login = async (email, password) => {
-    const res = await axiosClient.post("/auth/login", { email, password });
-    const { user, token } = res.data;
-    setUser(user);
-    if (token) {
-      localStorage.setItem("taskflow_token", token);
+    try {
+      const res = await axiosClient.post("/auth/login", { email, password });
+      const { user, token } = res.data;
+      setUser(user);
+      if (token) {
+        localStorage.setItem("taskflow_token", token);
+      }
+    } catch (err) {
+      console.error("Login failed, using dev fallback user", err);
+      // ✅ allow teammates to log in even if backend is not ready
+      devFallbackLogin({ email });
     }
   };
 
   const signup = async (name, email, password) => {
-    const res = await axiosClient.post("/auth/signup", {
-      name,
-      email,
-      password,
-    });
-    const { user, token } = res.data;
-    setUser(user);
-    if (token) {
-      localStorage.setItem("taskflow_token", token);
+    try {
+      const res = await axiosClient.post("/auth/signup", {
+        name,
+        email,
+        password,
+      });
+      const { user, token } = res.data;
+      setUser(user);
+      if (token) {
+        localStorage.setItem("taskflow_token", token);
+      }
+    } catch (err) {
+      console.error("Signup failed, using dev fallback user", err);
+      // ✅ same idea: still let them into the app
+      devFallbackLogin({ name, email });
     }
   };
 
