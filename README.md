@@ -11,12 +11,15 @@ https://github.com/varshithpulluri18/taskflow-frontend.git
 Open a terminal and run:
 git clone https://github.com/varshithpulluri18/taskflow-frontend.git
 cd taskflow-frontend 
+
 2. Install dependencies
 From inside the project folder (where package.json is):
 npm install
+
 3. Run the frontend
 Start the Vite dev server with:
 npm run dev
+
 4. What you can see on the frontend
 Once the app is running, you can navigate through:
 Login / Signup
@@ -26,11 +29,10 @@ Calendar – month/week/day views, tasks with due dates show up on their dates
 Teams / Team Board – simple Kanban-style columns
 Notifications – notifications page wired to axios
 Right now, some data may be mock/empty until the backend is fully connected, but the UI and routing are ready.
+
 5. Important note about login (dev fallback)
-
 Right now, the backend is still being finished.
-
-The frontend already uses **axios** to call these auth endpoints:
+The frontend already uses axios to call these auth endpoints:
 
 - `POST /auth/login`
 - `POST /auth/signup`
